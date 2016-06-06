@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import namhoai.dev.com.contact.model.Contact;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,8 +25,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ButterKnife.bind(this);
         initData();
-        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, displayName);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, displayName);
         listView.setAdapter(arrayAdapter);
     }
 
@@ -33,9 +35,9 @@ public class MainActivity extends AppCompatActivity {
         ContentResolver contentResolver = getContentResolver();
         Cursor cursor = contentResolver.query(ContactsContract.RawContacts.CONTENT_URI,
                 new String[]{ContactsContract.RawContacts._ID, ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY},
-                null, null, null);
+                null, null, null, null);
         contacts = new ArrayList<>();
-
+        displayName = new ArrayList<>();
         if(cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
@@ -44,7 +46,8 @@ public class MainActivity extends AppCompatActivity {
                     contact.setDisplayName(cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY)));
 
                     contacts.add(contact);
-                    displayName.add(cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY)));
+                    displayName.add(contact.getDisplayName());
+
                 }while (cursor.moveToNext());
             }
         }
